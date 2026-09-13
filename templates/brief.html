@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Operating brief — Conexus{% endblock %}
+{% block content %}
+<h1>Operating brief</h1>
+<p class="meta">Income target, budget, time, focus, and constraints. Leave unknowns blank.</p>
+<form method="post">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+    {% if field.errors %}<div class="meta" style="color:var(--danger)">{{ field.errors }}</div>{% endif %}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn">Save brief</button>
+</form>
+{% endblock %}

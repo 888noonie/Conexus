@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: conexus
+      POSTGRES_PASSWORD: conexus
+      POSTGRES_DB: conexus
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conexus"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    command: python manage.py migrate --noinput
+    environment:
+      CONEXUS_ENV: development
+      SECRET_KEY: docker-dev-secret-key-not-for-production
+      DATABASE_URL: postgres://conexus:conexus@db:5432/conexus
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      CSRF_TRUSTED_ORIGINS: http://localhost:8000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      CONEXUS_ENV: development
+      SECRET_KEY: docker-dev-secret-key-not-for-production
+      DATABASE_URL: postgres://conexus:conexus@db:5432/conexus
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      CSRF_TRUSTED_ORIGINS: http://localhost:8000
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    build: .
+    command: python manage.py worker
+    environment:
+      CONEXUS_ENV: development
+      SECRET_KEY: docker-dev-secret-key-not-for-production
+      DATABASE_URL: postgres://conexus:conexus@db:5432/conexus
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  pgdata:

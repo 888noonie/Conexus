@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign up — Conexus{% endblock %}
+{% block content %}
+<div class="login-page">
+  <div class="card login-card">
+    <h1>Create account</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn">Create account</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

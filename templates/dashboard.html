@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Conexus{% endblock %}
+{% block content %}
+<h1>{{ workspace.name }}</h1>
+<p class="meta">Private business-research workspace</p>
+
+<div class="card-grid">
+  <div class="card">
+    <div class="stat-value">{{ opportunity_count }}</div>
+    <div class="stat-label">Opportunities</div>
+  </div>
+  <div class="card">
+    <div class="stat-value">{{ evidence_count }}</div>
+    <div class="stat-label">Evidence records</div>
+  </div>
+  <div class="card">
+    <div class="stat-value">{% if active_experiment %}1{% else %}0{% endif %}</div>
+    <div class="stat-label">Active experiment</div>
+  </div>
+</div>
+
+{% if active_experiment %}
+<div class="card">
+  <h2>Active experiment</h2>
+  <p><strong>{{ active_experiment.hypothesis }}</strong></p>
+  <p class="meta">Deadline: {{ active_experiment.deadline }} · Budget: £{{ active_experiment.budget }}</p>
+  <div class="actions">
+    <a href="{% url 'experiment_outcome' active_experiment.id %}" class="btn">Record outcome</a>
+  </div>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>Recent jobs</h2>
+  {% if recent_jobs %}
+  <table>
+    <thead><tr><th>Kind</th><th>Status</th><th>When</th></tr></thead>
+    <tbody>
+      {% for job in recent_jobs %}
+      <tr>
+        <td>{{ job.kind }}</td>
+        <td><span class="badge badge-{{ job.status }}">{{ job.status }}</span></td>
+        <td class="meta">{{ job.created_at|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="meta">No research jobs yet.</p>
+  {% endif %}
+</div>
+
+<div class="actions">
+  <a href="{% url 'opportunity_create' %}" class="btn">New opportunity</a>
+  <a href="{% url 'evidence_create' %}" class="btn btn-secondary">Add evidence</a>
+</div>
+{% endblock %}

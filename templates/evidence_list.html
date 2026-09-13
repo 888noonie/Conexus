@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Evidence — Conexus{% endblock %}
+{% block content %}
+<h1>Evidence ledger</h1>
+<div class="actions" style="margin-bottom:1rem">
+  <a href="{% url 'evidence_create' %}" class="btn">Add evidence</a>
+</div>
+{% if evidence %}
+<table>
+  <thead><tr><th>Title</th><th>Kind</th><th>Stance</th><th>Observed</th><th></th></tr></thead>
+  <tbody>
+    {% for ev in evidence %}
+    <tr>
+      <td>{{ ev.title }}</td>
+      <td>{{ ev.kind }}</td>
+      <td>{{ ev.stance }}</td>
+      <td class="meta">{{ ev.observed_at|date:"Y-m-d" }}</td>
+      <td><a href="{% url 'evidence_link' ev.id %}">Link</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No evidence records yet.</p>
+{% endif %}
+{% endblock %}

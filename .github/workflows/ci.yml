@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: conexus
+          POSTGRES_PASSWORD: conexus
+          POSTGRES_DB: conexus
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U conexus"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+
+      - name: Ruff check
+        run: ruff check .
+
+      - name: Ruff format
+        run: ruff format --check .
+
+      - name: Migrations check
+        env:
+          CONEXUS_ENV: development
+          DATABASE_URL: postgres://conexus:conexus@localhost:5432/conexus
+          SECRET_KEY: ci-test-secret-key
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run tests
+        env:
+          CONEXUS_ENV: development
+          DATABASE_URL: postgres://conexus:conexus@localhost:5432/conexus
+          SECRET_KEY: ci-test-secret-key
+        run: python manage.py test
+
+      - name: Dependency audit
+        run: pip install pip-audit && pip-audit -r requirements.txt
+
+      - name: Deploy check
+        env:
+          CONEXUS_ENV: production
+          DATABASE_URL: postgres://conexus:conexus@localhost:5432/conexus
+          SECRET_KEY: ci-test-secret-key-with-at-least-fifty-characters-long
+          ALLOWED_HOSTS: example.com
+          CSRF_TRUSTED_ORIGINS: https://example.com
+        run: python manage.py check --deploy --fail-level WARNING

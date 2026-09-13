@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Opportunities — Conexus{% endblock %}
+{% block content %}
+<h1>Opportunities</h1>
+<div class="actions" style="margin-bottom:1rem">
+  <a href="{% url 'opportunity_create' %}" class="btn">New opportunity</a>
+</div>
+{% if opportunities %}
+<table>
+  <thead><tr><th>Title</th><th>Field</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+    {% for opp in opportunities %}
+    <tr>
+      <td>{{ opp.title }}</td>
+      <td>{{ opp.field }}</td>
+      <td>{{ opp.get_status_display }}</td>
+      <td><a href="{% url 'opportunity_detail' opp.id %}">View</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No opportunities yet.</p>
+{% endif %}
+{% endblock %}

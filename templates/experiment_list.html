@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Experiments — Conexus{% endblock %}
+{% block content %}
+<h1>Experiments</h1>
+{% if experiments %}
+<table>
+  <thead><tr><th>Hypothesis</th><th>Status</th><th>Deadline</th><th>Budget</th><th></th></tr></thead>
+  <tbody>
+    {% for exp in experiments %}
+    <tr>
+      <td>{{ exp.hypothesis|truncatechars:60 }}</td>
+      <td><span class="badge badge-{{ exp.status }}">{{ exp.status }}</span></td>
+      <td>{{ exp.deadline }}</td>
+      <td>£{{ exp.budget }}</td>
+      <td>
+        {% if exp.status == 'active' %}
+        <a href="{% url 'experiment_outcome' exp.id %}">Record outcome</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No experiments yet.</p>
+{% endif %}
+{% endblock %}

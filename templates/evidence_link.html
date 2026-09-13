@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Link evidence — Conexus{% endblock %}
+{% block content %}
+<h1>Link evidence</h1>
+<p><strong>{{ evidence.title }}</strong></p>
+<form method="post">
+  {% csrf_token %}
+  <div class="field">
+    <label for="id_opportunity">Opportunity</label>
+    <select name="opportunity" id="id_opportunity" required>
+      {% for opp in opportunities %}
+      <option value="{{ opp.id }}">{{ opp.title }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="id_stance">Stance</label>
+    <select name="stance" id="id_stance">
+      <option value="supports">Supports</option>
+      <option value="challenges">Challenges</option>
+      <option value="context" selected>Context</option>
+    </select>
+  </div>
+  <button type="submit" class="btn">Link</button>
+</form>
+{% endblock %}

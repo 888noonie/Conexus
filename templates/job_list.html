@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Jobs — Conexus{% endblock %}
+{% block content %}
+<h1>Research jobs</h1>
+{% if jobs %}
+<table>
+  <thead><tr><th>Kind</th><th>Status</th><th>Attempts</th><th>Created</th><th>Error</th></tr></thead>
+  <tbody>
+    {% for job in jobs %}
+    <tr>
+      <td>{{ job.kind }}</td>
+      <td><span class="badge badge-{{ job.status }}">{{ job.status }}</span></td>
+      <td>{{ job.attempts }}</td>
+      <td class="meta">{{ job.created_at|date:"Y-m-d H:i" }}</td>
+      <td class="meta">{{ job.error|truncatechars:80 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No jobs yet.</p>
+{% endif %}
+{% endblock %}
