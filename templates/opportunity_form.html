@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — Conexus{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<form method="post">
+  {% csrf_token %}
+  {% for field in form %}
+  <div class="field">
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {{ field }}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn">Save</button>
+</form>
+{% endblock %}

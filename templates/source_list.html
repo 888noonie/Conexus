@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Sources — Conexus{% endblock %}
+{% block content %}
+<h1>Source monitors</h1>
+<div class="actions" style="margin-bottom:1rem">
+  <a href="{% url 'source_create' %}" class="btn">New monitor</a>
+</div>
+{% if monitors %}
+<table>
+  <thead><tr><th>Name</th><th>Adapter</th><th>Enabled</th><th>Interval</th><th></th></tr></thead>
+  <tbody>
+    {% for m in monitors %}
+    <tr>
+      <td>{{ m.name }}</td>
+      <td>{{ m.get_adapter_display }}</td>
+      <td>{{ m.enabled|yesno:"Yes,No" }}</td>
+      <td>{{ m.interval_hours }}h</td>
+      <td>
+        <form method="post" action="{% url 'source_run' m.id %}" style="display:inline">{% csrf_token %}<button class="btn btn-sm btn-secondary">Run</button></form>
+        <form method="post" action="{% url 'source_toggle' m.id %}" style="display:inline">{% csrf_token %}<button class="btn btn-sm btn-secondary">Toggle</button></form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No source monitors configured.</p>
+{% endif %}
+{% endblock %}

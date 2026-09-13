@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Audit events — Conexus{% endblock %}
+{% block content %}
+<h1>Audit events</h1>
+{% if events %}
+<table>
+  <thead><tr><th>Action</th><th>Entity</th><th>When</th></tr></thead>
+  <tbody>
+    {% for e in events %}
+    <tr>
+      <td>{{ e.action }}</td>
+      <td class="meta">{{ e.entity_id }}</td>
+      <td class="meta">{{ e.created_at|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="meta">No events yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ opportunity.title }} — Conexus{% endblock %}
+{% block content %}
+<h1>{{ opportunity.title }}</h1>
+<p class="meta">{{ opportunity.field }} · {{ opportunity.get_status_display }}</p>
+
+<div class="card">
+  <h2>Problem</h2>
+  <p>{{ opportunity.problem }}</p>
+  {% if opportunity.buyer %}<p><strong>Buyer:</strong> {{ opportunity.buyer }}</p>{% endif %}
+  {% if opportunity.reach %}<p><strong>Reach:</strong> {{ opportunity.reach }}</p>{% endif %}
+  {% if opportunity.workaround %}<p><strong>Workaround:</strong> {{ opportunity.workaround }}</p>{% endif %}
+  {% if opportunity.delivery %}<p><strong>Delivery:</strong> {{ opportunity.delivery }}</p>{% endif %}
+</div>
+
+<div class="card">
+  <h2>Linked evidence</h2>
+  {% if evidence %}
+  <ul>
+    {% for ev in evidence %}
+    <li><strong>{{ ev.title }}</strong> <span class="badge">{{ ev.stance }}</span> — {{ ev.kind }}</li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="meta">No linked evidence.</p>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h2>Assessments</h2>
+  {% for a in assessments %}
+  <div style="margin-bottom:1rem">
+    <p class="meta">{{ a.method }} · {{ a.created_at|date:"Y-m-d H:i" }}</p>
+    {% if a.report.items %}
+    {% for item in a.report.items %}
+    <div class="checklist-item {% if item.status == 'missing' %}missing{% endif %}">
+      <strong>{{ item.check }}</strong>: {{ item.detail }}
+    </div>
+    {% endfor %}
+    {% elif a.report.draft %}
+    <p>{{ a.report.draft }}</p>
+    <p class="meta">{{ a.report.label }}</p>
+    {% endif %}
+  </div>
+  {% empty %}
+  <p class="meta">No assessments yet.</p>
+  {% endfor %}
+</div>
+
+<div class="actions">
+  <a href="{% url 'opportunity_edit' opportunity.id %}" class="btn btn-secondary">Edit</a>
+  <form method="post" action="{% url 'opportunity_assess' opportunity.id %}" style="display:inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-secondary">Run checklist</button>
+  </form>
+  {% if ai_configured %}
+  <form method="post" action="{% url 'opportunity_review' opportunity.id %}" style="display:inline">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-secondary">Queue AI review</button>
+  </form>
+  {% endif %}
+  {% if not active_experiment %}
+  <a href="{% url 'experiment_start' opportunity.id %}" class="btn">Start experiment</a>
+  {% endif %}
+</div>
+{% endblock %}

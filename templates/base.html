@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Conexus{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/conexus.css">
+</head>
+<body>
+  {% if user.is_authenticated %}
+  <header class="site-header">
+    <div class="inner">
+      <a href="{% url 'dashboard' %}" class="brand">Conexus</a>
+      <nav class="nav-links">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'brief' %}">Brief</a>
+        <a href="{% url 'opportunity_list' %}">Opportunities</a>
+        <a href="{% url 'evidence_list' %}">Evidence</a>
+        <a href="{% url 'experiment_list' %}">Experiments</a>
+        <a href="{% url 'source_list' %}">Sources</a>
+        <a href="{% url 'job_list' %}">Jobs</a>
+        <a href="{% url 'logout' %}">Sign out</a>
+      </nav>
+    </div>
+  </header>
+  {% endif %}
+  <main>
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
